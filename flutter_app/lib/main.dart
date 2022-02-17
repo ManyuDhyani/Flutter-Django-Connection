@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/student.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,28 +30,40 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Student studentService = Student();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: ListView.builder(
-          itemCount: 4,
-          itemBuilder: (context, i) {
-            return Card(
-              child: ListTile(
-                title: Text(
-                  "Name",
-                  style: TextStyle(fontSize: 30),
-                ),
-                subtitle: Text(
-                  "Email",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            );
-          }),
-    );
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: FutureBuilder<List>(
+          future: studentService.getAllStudent(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (context, i) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(
+                          snapshot.data![i]['stuname'],
+                          style: const TextStyle(fontSize: 30),
+                        ),
+                        subtitle: Text(
+                          snapshot.data![i]['email'],
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    );
+                  });
+            } else {
+              return const Center(
+                child: Text("No Data Found"),
+              );
+            }
+          },
+        ));
   }
 }
